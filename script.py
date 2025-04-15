@@ -53,20 +53,20 @@ output_dim = 3  # For binary classification
 sequence_length = 100
 
 model = LSTMClassifier(vocab_size=vocab_size, embedding_dim=embedding_dim,hidden_dim = 32, output_dim = output_dim, num_layers=1, dropout=0.3)
-model.load_state_dict(torch.load("lstm.pth", map_location='cuda'))
+model.load_state_dict(torch.load("lstm.pth", map_location='cpu'))
 model.eval()
 
-model = model.to('cuda')
+model = model.to('cpu')
 # Load the embedding model
 from sentence_transformers import SentenceTransformer
 
-embedding_model = SentenceTransformer("all-MiniLM-L6-v2").to('cuda')
+embedding_model = SentenceTransformer("all-MiniLM-L6-v2").to('cpu')
 
 # Label mapping (example)
 label_map = {0: "negative", 1: "neutral", 2: "positive"}
 
 def predict_sentiment(text):
-    inputs = embedding_model.encode(text, convert_to_tensor=True).unsqueeze(0).to('cuda')
+    inputs = embedding_model.encode(text, convert_to_tensor=True).unsqueeze(0).to('cpu')
     with torch.no_grad():
         print("inputs:", inputs.shape)
         outputs = model(inputs)
